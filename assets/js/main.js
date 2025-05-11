@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     products = window.productsData || [];
   } catch (error) {
-    console.error('Error loading products:', error);
+    console.error("Error loading products:", error);
     products = [];
   }
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="brand-name">${product.name}</div>
                 <img src="assets/images/products/${product.image
                   .split("/")
-                  .pop()}" alt="${product.name}" class="brand-image">
+                  .pop()}" alt="${product.name}" class="brand-image" loading="lazy">
                 <div class="brand-info">
                     <button class="proof">Proof</button>
                 </div>
@@ -47,8 +47,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Memoize filtered products for better performance
+  const memoizedProducts = new Map();
+  
   // Function to filter and display products
   function filterAndDisplayProducts() {
+    const cacheKey = `${currentCategory}-${searchQuery}`;
+    if (memoizedProducts.has(cacheKey)) {
+      renderProducts(memoizedProducts.get(cacheKey));
+      return;
+    }
+
     const brandOrder = [
       "Amazon",
       "Google",
@@ -463,7 +472,7 @@ function updateThemeToggle(theme) {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/assets/js/sw.js")
+      .register("/boycott-tn/assets/js/sw.js")
       .then((registration) => {
         console.log("ServiceWorker registration successful");
       })
