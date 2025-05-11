@@ -16,10 +16,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   let searchQuery = "";
   let products = [];
 
-  // Load products from JSON file
+  // Load products from data.js
   try {
-    const response = await fetch('/data/data.js');
-    products = await response.json();
+    products = window.productsData || [];
   } catch (error) {
     console.error('Error loading products:', error);
     products = [];
