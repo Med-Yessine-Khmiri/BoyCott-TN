@@ -2,7 +2,7 @@
   "name": "BoyCott Tunise",
   "short_name": "BoyCott Tunise",
   "description": "Support Palestine by boycotting products and brands that support occupation",
-  "start_url": "/",
+  "start_url": "/boycott-tn/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#c41e3a",
