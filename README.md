@@ -1,3 +1,7 @@
+> ⚠️ **Note:** This website is currently **under development** and may contain various **issues**.  
+> It's hosted on **Git** for version control and ongoing work.  
+> Please be aware that features may not work as expected while **coding is still in progress**.
+
 # Boycott TN
 
 A website that helps users make informed decisions about product choices by providing information about various brands and their products.
