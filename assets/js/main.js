@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   // Force scroll to top on page load/refresh
   if (history.scrollRestoration) {
     history.scrollRestoration = "manual";
@@ -14,6 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentCategory = "all";
   let searchQuery = "";
+  let products = [];
+
+  // Load products from JSON file
+  try {
+    const response = await fetch('/data/data.js');
+    products = await response.json();
+  } catch (error) {
+    console.error('Error loading products:', error);
+    products = [];
+  }
 
   // Function to create brand card HTML
   function createBrandCard(product) {
@@ -33,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to update brands counter
   function updateBrandsCounter() {
     const counter = document.querySelector(".counter");
-    if (counter && window.productsData) {
-      counter.textContent = productsData.length;
+    if (counter && products) {
+      counter.textContent = products.length;
     }
   }
 
@@ -62,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "Coca-Cola", // Adding Coca-Cola at the end since it wasn't in the original list
     ];
 
-    const filteredProducts = productsData.filter((product) => {
+    const filteredProducts = products.filter((product) => {
       const matchesCategory =
         currentCategory === "all" ||
         product.category.toLowerCase() === currentCategory;
@@ -248,13 +258,13 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("scroll", handleScroll);
 
   // Initial load - ensure data is loaded
-  if (window.productsData) {
+  if (products.length > 0) {
     filterAndDisplayProducts();
     updateBrandsCounter();
   } else {
     // Wait for data to be loaded
     window.addEventListener("load", () => {
-      if (window.productsData) {
+      if (products.length > 0) {
         filterAndDisplayProducts();
         updateBrandsCounter();
       }
