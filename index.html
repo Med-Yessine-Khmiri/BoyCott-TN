@@ -62,8 +62,19 @@
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+    <!-- Image optimization hints -->
+    <link rel="preload" as="image" href="assets/images/logo.png" />
+    <link rel="preload" as="image" href="assets/images/screen/1.jpg" />
+
+    <!-- Compression and caching headers -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000" />
+    <meta http-equiv="Content-Encoding" content="gzip" />
   </head>
   <body>
+    <div id="loading" class="loading" style="display: none">
+      <div class="loading-spinner"></div>
+    </div>
     <nav class="navbar">
       <div class="nav-content">
         <div class="logo">

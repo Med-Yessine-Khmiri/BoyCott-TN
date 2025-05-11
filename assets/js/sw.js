@@ -1,47 +1,42 @@
-const CACHE_NAME = 'boycott-tn-v1';
+const CACHE_NAME = "boycott-tn-v1";
 const urlsToCache = [
-  '/boycott-tn/',
-  '/boycott-tn/index.html',
-  '/boycott-tn/assets/styles/style.css',
-  '/boycott-tn/assets/js/main.js',
-  '/boycott-tn/data/data.js',
-  '/boycott-tn/manifest.json'
+  "/boycott-tn/",
+  "/boycott-tn/index.html",
+  "/boycott-tn/assets/styles/style.css",
+  "/boycott-tn/assets/js/main.js",
+  "/boycott-tn/data/data.js",
+  "/boycott-tn/manifest.json",
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
+    caches.match(event.request).then((response) => {
+      // Cache hit - return response
+      if (response) {
+        return response;
+      }
+
+      return fetch(event.request).then((response) => {
+        // Check if we received a valid response
+        if (!response || response.status !== 200 || response.type !== "basic") {
           return response;
         }
 
-        return fetch(event.request).then(
-          response => {
-            // Check if we received a valid response
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
+        // Clone the response
+        const responseToCache = response.clone();
 
-            // Clone the response
-            const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
 
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-    );
+        return response;
+      });
+    })
+  );
 });

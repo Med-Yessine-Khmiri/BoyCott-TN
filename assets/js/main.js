@@ -1,4 +1,44 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const loading = document.getElementById("loading");
+
+  // Show loading
+  function showLoading() {
+    loading.style.display = "flex";
+  }
+
+  // Hide loading
+  function hideLoading() {
+    loading.style.display = "none";
+  }
+
+  // Load and cache images
+  function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => reject(url);
+      img.src = url;
+    });
+  }
+
+  // Preload critical images
+  async function preloadCriticalImages() {
+    showLoading();
+    try {
+      const criticalImages = products
+        .slice(0, 12)
+        .map(
+          (product) =>
+            `assets/images/products/${product.image.split("/").pop()}`
+        );
+      await Promise.allSettled(criticalImages.map(preloadImage));
+    } catch (error) {
+      console.error("Error preloading images:", error);
+    } finally {
+      hideLoading();
+    }
+  }
+
   // Force scroll to top on page load/refresh
   if (history.scrollRestoration) {
     history.scrollRestoration = "manual";
@@ -31,7 +71,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="brand-name">${product.name}</div>
                 <img src="assets/images/products/${product.image
                   .split("/")
-                  .pop()}" alt="${product.name}" class="brand-image" loading="lazy">
+                  .pop()}" alt="${
+      product.name
+    }" class="brand-image" loading="lazy">
                 <div class="brand-info">
                     <button class="proof">Proof</button>
                 </div>
@@ -49,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Memoize filtered products for better performance
   const memoizedProducts = new Map();
-  
+
   // Function to filter and display products
   function filterAndDisplayProducts() {
     const cacheKey = `${currentCategory}-${searchQuery}`;
@@ -267,12 +309,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Initial load - ensure data is loaded
   if (products.length > 0) {
+    await preloadCriticalImages();
     filterAndDisplayProducts();
     updateBrandsCounter();
   } else {
     // Wait for data to be loaded
-    window.addEventListener("load", () => {
+    window.addEventListener("load", async () => {
       if (products.length > 0) {
+        await preloadCriticalImages();
         filterAndDisplayProducts();
         updateBrandsCounter();
       }
